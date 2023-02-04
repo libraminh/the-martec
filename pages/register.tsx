@@ -15,6 +15,8 @@ import {
   Select,
 } from "antd";
 import React, { useState } from "react";
+import BaseModal from "../components/BaseModal";
+import { useModalStore } from "../store/useModalStore";
 
 interface Props {}
 
@@ -87,9 +89,12 @@ const tailFormItemLayout = {
 
 const Register: NextPage = (props: Props) => {
   const [form] = Form.useForm();
+  const { showModal, setOpen } = useModalStore();
 
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
+
+    setOpen(true);
   };
 
   return (
@@ -193,6 +198,8 @@ const Register: NextPage = (props: Props) => {
           </Form.Item>
         </Form>
       </div>
+
+      <BaseModal />
     </div>
   );
 };
