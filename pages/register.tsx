@@ -1,100 +1,46 @@
 import { NextPage } from "next";
 import Head from "next/head";
 
-import type { CascaderProps } from "antd";
-import {
-  AutoComplete,
-  Button,
-  Cascader,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-} from "antd";
-import React, { useState } from "react";
+import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input, message } from "antd";
 import BaseModal from "../components/BaseModal";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useModalStore } from "../store/useModalStore";
+import { UserType } from "../types";
+import { useRouter } from "next/router";
+import { routers } from "../constants";
 
 interface Props {}
 
-const { Option } = Select;
-
-interface DataNodeType {
-  value: string;
-  label: string;
-  children?: DataNodeType[];
-}
-
-const residences: CascaderProps<DataNodeType>["options"] = [
-  {
-    value: "zhejiang",
-    label: "Zhejiang",
-    children: [
-      {
-        value: "hangzhou",
-        label: "Hangzhou",
-        children: [
-          {
-            value: "xihu",
-            label: "West Lake",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: "jiangsu",
-    label: "Jiangsu",
-    children: [
-      {
-        value: "nanjing",
-        label: "Nanjing",
-        children: [
-          {
-            value: "zhonghuamen",
-            label: "Zhong Hua Men",
-          },
-        ],
-      },
-    ],
-  },
-];
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
-
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
-  },
-};
-
 const Register: NextPage = (props: Props) => {
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
   const { showModal, setOpen } = useModalStore();
+  const [users, setUsers] = useLocalStorage<UserType[]>("users", []);
+  const router = useRouter();
 
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const showError = () => {
+    messageApi.open({
+      type: "error",
+      content: "User is already exist, please try to login.",
+    });
+  };
 
+  const onFinish = (values: UserType) => {
+    const findUser = users.find(
+      (user: UserType) => user.email === values.email
+    );
+
+    if (findUser) {
+      showError();
+      return;
+    }
+
+    const usersData = [...users, values];
+
+    setUsers(usersData);
     setOpen(true);
+    setTimeout(() => router.push(routers.LOGIN), 2000);
   };
 
   return (
@@ -104,9 +50,10 @@ const Register: NextPage = (props: Props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {contextHolder}
+
       <div>
         <Form
-          {...formItemLayout}
           form={form}
           name="register"
           onFinish={onFinish}
@@ -114,28 +61,25 @@ const Register: NextPage = (props: Props) => {
           scrollToFirstError
         >
           <Form.Item
-            label="First name"
             name="firstname"
             rules={[
               { required: true, message: "Please input your first name!" },
             ]}
           >
-            <Input />
+            <Input prefix={<UserOutlined />} placeholder="First name" />
           </Form.Item>
 
           <Form.Item
-            label="Last name"
             name="lastname"
             rules={[
               { required: true, message: "Please input your first name!" },
             ]}
           >
-            <Input />
+            <Input prefix={<UserOutlined />} placeholder="Last name" />
           </Form.Item>
 
           <Form.Item
             name="email"
-            label="E-mail"
             rules={[
               {
                 type: "email",
@@ -147,12 +91,11 @@ const Register: NextPage = (props: Props) => {
               },
             ]}
           >
-            <Input />
+            <Input prefix={<MailOutlined />} placeholder="Email" />
           </Form.Item>
 
           <Form.Item
             name="password"
-            label="Password"
             rules={[
               {
                 required: true,
@@ -161,12 +104,14 @@ const Register: NextPage = (props: Props) => {
             ]}
             hasFeedback
           >
-            <Input.Password />
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              placeholder="Password"
+            />
           </Form.Item>
 
           <Form.Item
             name="confirm"
-            label="Confirm Password"
             dependencies={["password"]}
             hasFeedback
             rules={[
@@ -188,10 +133,13 @@ const Register: NextPage = (props: Props) => {
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              placeholder="Confirm Password"
+            />
           </Form.Item>
 
-          <Form.Item {...tailFormItemLayout}>
+          <Form.Item className="text-center">
             <Button type="primary" htmlType="submit">
               Register
             </Button>

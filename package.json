@@ -6,13 +6,18 @@
     "start": "next start"
   },
   "dependencies": {
+    "@fontsource/open-sans": "^4.5.14",
     "antd": "^5.1.7",
+    "lodash": "^4.17.21",
     "next": "latest",
+    "octokit": "^2.0.14",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-share": "^4.4.1",
     "zustand": "^4.3.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.191",
     "@types/node": "18.11.3",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",

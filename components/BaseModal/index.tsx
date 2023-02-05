@@ -26,8 +26,8 @@ const BaseModal: React.FC = () => {
       <h2 className="text-xl font-bold text-center">Register Sucessfully!</h2>
 
       <p className="text-base text-center">
-        Thank you for your registration, you will be redirect to the Dashboard
-        page soon.
+        Thank you for your registration, you will be redirect to the Login page
+        soon.
       </p>
     </Modal>
   );
