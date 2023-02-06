@@ -1,15 +1,15 @@
 import { NextPage } from "next";
 import Head from "next/head";
 
-import { Button, Form, Input, message } from "antd";
-import { UserType } from "../types";
-import { useRouter } from "next/router";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { Button, Form, Input, message } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { routerPaths } from "../constants";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { routers } from "../constants";
 import { useUserStore } from "../store/useUserStore";
+import { UserType } from "../types";
 
 interface Props {}
 
@@ -33,7 +33,7 @@ const Login: NextPage = (props: Props) => {
     if (findUser) {
       if (findUser.password === password) {
         setUser(values);
-        router.push(routers.HOME);
+        router.push(routerPaths.HOME);
       } else {
         messageApi.open({
           type: "error",
@@ -55,9 +55,7 @@ const Login: NextPage = (props: Props) => {
         <title>Login - The Martec</title>
       </Head>
 
-      {contextHolder}
-
-      <div className="fixed w-full h-full flex items-center justify-center py-2">
+      <div>
         <Form
           form={form}
           name="login"
@@ -115,7 +113,7 @@ const Login: NextPage = (props: Props) => {
                   Log in
                 </Button>
 
-                <Link href={`/register`}>
+                <Link href={routerPaths.REGISTER}>
                   <Button type="link">Register</Button>
                 </Link>
               </>
@@ -123,6 +121,8 @@ const Login: NextPage = (props: Props) => {
           </Form.Item>
         </Form>
       </div>
+
+      {contextHolder}
     </div>
   );
 };

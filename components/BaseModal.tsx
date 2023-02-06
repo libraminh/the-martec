@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { Button, Modal } from "antd";
-import { useModalStore } from "../../store/useModalStore";
+import { Modal } from "antd";
+import { useModalStore } from "../store/useModalStore";
 
-const BaseModal: React.FC = () => {
+const BaseModal = () => {
   const { showModal, setOpen } = useModalStore();
 
   const handleOk = () => {

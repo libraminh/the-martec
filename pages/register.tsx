@@ -3,16 +3,15 @@ import Head from "next/head";
 
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import BaseModal from "../components/BaseModal";
+import { routerPaths } from "../constants";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useModalStore } from "../store/useModalStore";
 import { UserType } from "../types";
-import { useRouter } from "next/router";
-import { routers } from "../constants";
 
-interface Props {}
-
-const Register: NextPage = (props: Props) => {
+const Register: NextPage = () => {
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const { showModal, setOpen } = useModalStore();
@@ -27,11 +26,11 @@ const Register: NextPage = (props: Props) => {
   };
 
   const onFinish = (values: UserType) => {
-    const findUser = users.find(
+    const finduser = users.find(
       (user: UserType) => user.email === values.email
     );
 
-    if (findUser) {
+    if (finduser) {
       showError();
       return;
     }
@@ -40,17 +39,15 @@ const Register: NextPage = (props: Props) => {
 
     setUsers(usersData);
     setOpen(true);
-    setTimeout(() => router.push(routers.LOGIN), 2000);
+    setTimeout(() => router.push(routerPaths.LOGIN), 2000);
   };
 
   return (
-    <div className="fixed w-full h-full flex items-center justify-center py-2">
+    <div>
       <Head>
         <title>Register - The Martec</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      {contextHolder}
 
       <div>
         <Form
@@ -143,11 +140,16 @@ const Register: NextPage = (props: Props) => {
             <Button type="primary" htmlType="submit">
               Register
             </Button>
+
+            <Link href={routerPaths.LOGIN}>
+              <Button type="link">Login</Button>
+            </Link>
           </Form.Item>
         </Form>
       </div>
 
       <BaseModal />
+      {contextHolder}
     </div>
   );
 };
