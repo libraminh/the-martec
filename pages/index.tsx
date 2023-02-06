@@ -2,18 +2,16 @@ import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useUserStore } from "../store/useUserStore";
-import { UserType } from "../types";
 
 import { Button, Card, Form, Input, List, message, Tooltip } from "antd";
 import { isEmpty } from "lodash";
 import Link from "next/link";
 import { Octokit } from "octokit";
 import { LinkedinShareButton } from "react-share";
+import { EditUser } from "../components/EditUser";
 import { routerPaths } from "../constants";
 import { useModalStore } from "../store/useModalStore";
-import { EditUser } from "../components/EditUser";
 
 const listPageSize = 10;
 
@@ -22,10 +20,7 @@ const Home: NextPage = () => {
     auth: process.env.NEXT_PUBLIC_GITHUB_TOKEN,
   });
   const [form] = Form.useForm();
-  const [users, setUsers] = useLocalStorage<UserType[]>("users", []);
   const { sessionUser } = useUserStore();
-  const loggedInUser =
-    users.find((item) => item.email === sessionUser.email) || {};
   const [repos, setRepos] = useState([]);
   const [reposLoading, setReposLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -61,7 +56,7 @@ const Home: NextPage = () => {
 
       <div className="grid md:grid-cols-2 gap-10">
         <div>
-          {isEmpty(loggedInUser) ? (
+          {isEmpty(sessionUser) ? (
             <div className="mb-5">
               <span className="text-sm md:text-base">
                 Please <Link href={routerPaths.LOGIN}>login</Link> to get your
@@ -81,11 +76,11 @@ const Home: NextPage = () => {
               className="w-[300px] mb-10"
             >
               <div className="space-y-2">
-                {Object.keys(loggedInUser)?.map((user, userIndex) => (
+                {Object.keys(sessionUser)?.map((user, userIndex) => (
                   <div key={userIndex}>
                     <>
                       <strong className="capitalize">{user}</strong>:{" "}
-                      {Object.values(loggedInUser)[userIndex]}
+                      {Object.values(sessionUser)[userIndex]}
                     </>
                   </div>
                 ))}

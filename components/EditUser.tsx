@@ -1,31 +1,57 @@
-import { Button, Form, Input } from "antd";
-import BaseModal from "./BaseModal";
-import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
-import { useUserStore } from "../store/useUserStore";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input, message } from "antd";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { UserType } from "../types";
 import { useModalStore } from "../store/useModalStore";
+import { useUserStore } from "../store/useUserStore";
+import { UserType } from "../types";
+import BaseModal from "./BaseModal";
+
+type FormValues = Partial<UserType> & {
+  oldPassword: string;
+};
 
 export const EditUser = () => {
   const [form] = Form.useForm();
-  const [users, setUsers] = useLocalStorage<UserType[]>("users", []);
-  const { sessionUser } = useUserStore();
+  const { sessionUser, setUser } = useUserStore();
   const { showModal, setOpen } = useModalStore();
-  const currentUser = users?.find((user) => user.email === sessionUser.email);
+  const [users, setUsers] = useLocalStorage<UserType[]>("users", []);
+  const [messageApi, contextHolder] = message.useMessage();
 
-  const onFinish = async (values: Partial<UserType>) => {
-    console.log("values", values);
+  const onFinish = async (values: FormValues) => {
+    if (values.oldPassword !== sessionUser.password) {
+      messageApi.open({
+        type: "error",
+        content: "Your old password is wrong, please try again!",
+      });
+      return;
+    }
+
+    const { oldPassword, ...rest } = values;
+
+    const updatedUser = { ...sessionUser, ...rest, confirm: values.password };
+
+    const updatedUsers = users.map((user) =>
+      user.email === sessionUser.email ? updatedUser : user
+    );
+
+    messageApi.open({
+      type: "success",
+      content: "Your information is updated!",
+    });
+    setUsers(updatedUsers as any);
+    setUser(updatedUser);
+    setOpen(false);
   };
 
   return (
     <BaseModal>
-      <h2 className="text-lg font-bold">Edit User</h2>
+      <h2 className="text-lg font-bold">Edit User - {sessionUser.email}</h2>
 
       <Form
         form={form}
         name="edit-user"
         onFinish={onFinish}
-        initialValues={currentUser}
+        initialValues={{ ...sessionUser, password: "", confirm: "" }}
         style={{ maxWidth: 800 }}
         scrollToFirstError
       >
@@ -44,19 +70,19 @@ export const EditUser = () => {
         </Form.Item>
 
         <Form.Item
-          name="email"
+          name="oldPassword"
           rules={[
             {
-              type: "email",
-              message: "The input is not valid E-mail!",
-            },
-            {
               required: true,
-              message: "Please input your E-mail!",
+              message: "Please input your old password!",
             },
           ]}
+          hasFeedback
         >
-          <Input prefix={<MailOutlined />} placeholder="Email" />
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="Old Password"
+          />
         </Form.Item>
 
         <Form.Item
@@ -69,37 +95,7 @@ export const EditUser = () => {
           ]}
           hasFeedback
         >
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            placeholder="Password"
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="confirm"
-          dependencies={["password"]}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: "Please confirm your password!",
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(
-                  new Error("The two passwords that you entered do not match!")
-                );
-              },
-            }),
-          ]}
-        >
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            placeholder="Confirm Password"
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder="Password" />
         </Form.Item>
 
         <Form.Item>
@@ -114,6 +110,8 @@ export const EditUser = () => {
           </div>
         </Form.Item>
       </Form>
+
+      {contextHolder}
     </BaseModal>
   );
 };

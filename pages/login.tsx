@@ -32,7 +32,7 @@ const Login: NextPage = (props: Props) => {
 
     if (findUser) {
       if (findUser.password === password) {
-        setUser(values);
+        setUser(findUser);
         router.push(routerPaths.HOME);
       } else {
         messageApi.open({
