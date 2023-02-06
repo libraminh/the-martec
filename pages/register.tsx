@@ -10,6 +10,7 @@ import { routerPaths } from "../constants";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useModalStore } from "../store/useModalStore";
 import { UserType } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 const Register: NextPage = () => {
   const [form] = Form.useForm();
@@ -35,7 +36,7 @@ const Register: NextPage = () => {
       return;
     }
 
-    const usersData = [...users, values];
+    const usersData = [...users, { ...values, id: uuidv4() }];
 
     setUsers(usersData);
     setOpen(true);
