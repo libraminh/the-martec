@@ -6,12 +6,14 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useUserStore } from "../store/useUserStore";
 import { UserType } from "../types";
 
-import { Button, Form, Input, List, message, Tooltip } from "antd";
+import { Button, Card, Form, Input, List, message, Tooltip } from "antd";
 import { isEmpty } from "lodash";
 import Link from "next/link";
 import { Octokit } from "octokit";
 import { LinkedinShareButton } from "react-share";
 import { routerPaths } from "../constants";
+import { useModalStore } from "../store/useModalStore";
+import { EditUser } from "../components/EditUser";
 
 const listPageSize = 10;
 
@@ -27,6 +29,7 @@ const Home: NextPage = () => {
   const [repos, setRepos] = useState([]);
   const [reposLoading, setReposLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const { showModal, setOpen } = useModalStore();
 
   const onFinish = async ({ username }: { username: string }) => {
     setReposLoading(true);
@@ -58,8 +61,6 @@ const Home: NextPage = () => {
 
       <div className="grid md:grid-cols-2 gap-10">
         <div>
-          <h2 className="text-2xl md:text-4xl font-bold">User Information</h2>
-
           {isEmpty(loggedInUser) ? (
             <div className="mb-5">
               <span className="text-sm md:text-base">
@@ -68,16 +69,28 @@ const Home: NextPage = () => {
               </span>
             </div>
           ) : (
-            <ul className="text-sm md:text-base space-y-1 list-inside p-0">
-              {Object.keys(loggedInUser)?.map((user, userIndex) => (
-                <li key={userIndex}>
-                  <>
-                    <strong className="capitalize">{user}</strong> :{" "}
-                    {Object.values(loggedInUser)[userIndex]}
-                  </>
-                </li>
-              ))}
-            </ul>
+            <Card
+              title={
+                <div className="flex justify-between items-center">
+                  <span className="font-bold">User Info</span>
+                  <Button type="primary" onClick={() => setOpen(true)}>
+                    Edit User
+                  </Button>
+                </div>
+              }
+              className="w-[300px] mb-10"
+            >
+              <div className="space-y-2">
+                {Object.keys(loggedInUser)?.map((user, userIndex) => (
+                  <div key={userIndex}>
+                    <>
+                      <strong className="capitalize">{user}</strong>:{" "}
+                      {Object.values(loggedInUser)[userIndex]}
+                    </>
+                  </div>
+                ))}
+              </div>
+            </Card>
           )}
 
           <Form
@@ -110,9 +123,13 @@ const Home: NextPage = () => {
           header={<div className="text-xl font-bold up">Github Repos</div>}
           bordered
           dataSource={repos}
-          pagination={{
-            pageSize: listPageSize,
-          }}
+          pagination={
+            repos.length > 0
+              ? {
+                  pageSize: listPageSize,
+                }
+              : false
+          }
           renderItem={(item: { html_url: string; name: string }) => {
             return (
               <List.Item>
@@ -136,6 +153,7 @@ const Home: NextPage = () => {
         />
       </div>
 
+      <EditUser />
       {contextHolder}
     </div>
   );

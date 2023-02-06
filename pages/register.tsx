@@ -149,7 +149,14 @@ const Register: NextPage = () => {
         </Form>
       </div>
 
-      <BaseModal />
+      <BaseModal>
+        <h2 className="text-xl font-bold text-center">Register Sucessfully!</h2>
+
+        <p className="text-base text-center">
+          Thank you for your registration, you will be redirect to the Login
+          page soon.
+        </p>
+      </BaseModal>
       {contextHolder}
     </div>
   );

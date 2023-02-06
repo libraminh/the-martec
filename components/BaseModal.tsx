@@ -1,7 +1,8 @@
 import { Modal } from "antd";
+import { ReactNode } from "react";
 import { useModalStore } from "../store/useModalStore";
 
-const BaseModal = () => {
+const BaseModal = ({ children }: { children: ReactNode }) => {
   const { showModal, setOpen } = useModalStore();
 
   const handleOk = () => {
@@ -22,12 +23,7 @@ const BaseModal = () => {
       footer
       className="text-center"
     >
-      <h2 className="text-xl font-bold text-center">Register Sucessfully!</h2>
-
-      <p className="text-base text-center">
-        Thank you for your registration, you will be redirect to the Login page
-        soon.
-      </p>
+      {children}
     </Modal>
   );
 };
