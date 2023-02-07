@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useModalStore } from "../store/useModalStore";
 
 const BaseModal = ({ children }: { children: ReactNode }) => {
@@ -12,6 +12,13 @@ const BaseModal = ({ children }: { children: ReactNode }) => {
   const handleCancel = () => {
     setOpen(false);
   };
+
+  // reset modal when unmount
+  useEffect(() => {
+    return () => {
+      setOpen(false);
+    };
+  }, []);
 
   return (
     <Modal

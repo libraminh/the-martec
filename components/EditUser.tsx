@@ -51,7 +51,12 @@ export const EditUser = () => {
         form={form}
         name="edit-user"
         onFinish={onFinish}
-        initialValues={{ ...sessionUser, password: "", confirm: "" }}
+        initialValues={{
+          ...sessionUser,
+          password: "",
+          confirm: "",
+          oldPassword: "",
+        }}
         style={{ maxWidth: 800 }}
         scrollToFirstError
       >
