@@ -1,8 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Register from "../pages/register";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import mockRouter from "next-router-mock";
+import Register from "../pages/register";
 
 jest.mock("next/router", () => require("next-router-mock"));
 
@@ -25,16 +24,7 @@ describe("Register Page", () => {
     render(<Register />);
   });
 
-  // const emailInput = screen.getByTestId(/email/i);
-  // const passwordInput = screen.getByPlaceholderText(/password/i);
-  // const confirmPasswordInput = screen.getByPlaceholderText(/confirm password/i);
-  // const firstnameInput = screen.getByPlaceholderText(/first name/i);
-  // const lastnameInput = screen.getByPlaceholderText(/last name/i);
-  // const registerButton = screen.getByRole("button", {
-  //   name: /register/i,
-  // });
-
-  it("register success, redirect to login", async () => {
+  it("register success, show thank you message", async () => {
     await user.type(screen.getByPlaceholderText(/first name/i), "minh");
     await user.type(screen.getByPlaceholderText(/last name/i), "le");
     await user.type(screen.getByTestId(/email/i), "libraminh@gmail.com");
@@ -42,10 +32,6 @@ describe("Register Page", () => {
     await user.type(screen.getByTestId("confirmPassword"), "1234");
     await user.click(screen.getByTestId("register"));
 
-    await waitFor(() =>
-      expect(mockRouter).toMatchObject({
-        pathname: "/login",
-      })
-    );
+    expect(screen.getByText(/register sucessfully!/i)).toBeInTheDocument();
   });
 });
