@@ -2,18 +2,17 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Login from "../pages/login";
 import userEvent from "@testing-library/user-event";
+import mockRouter from "next-router-mock";
 
 jest.mock("next/router", () => require("next-router-mock"));
 
 const user = userEvent.setup();
 
-function getEmailInput() {
-  return screen.getByPlaceholderText(/email/i);
-}
-
-function getPasswordInput() {
-  return screen.getByPlaceholderText(/password/i);
-}
+const btnLogin = screen.getByRole("button", {
+  name: /log in/i,
+});
+const inputEmail = screen.getByPlaceholderText(/email/i);
+const passwordEmail = screen.getByPlaceholderText(/password/i);
 
 describe("Login Page", () => {
   beforeAll(() => {
@@ -32,21 +31,28 @@ describe("Login Page", () => {
     render(<Login />);
   });
 
-  it("show email input", async () => {
-    expect(getEmailInput()).toBeInTheDocument();
+  it("button login disable at start", async () => {
+    expect(btnLogin).toBeDisabled();
   });
 
-  it("could type the email", async () => {
-    await user.type(getEmailInput(), "libraminh");
-    expect(getEmailInput().value).toBe("libraminh");
+  it("button login not disable when put fields value", async () => {
+    const btnLogin = screen.getByRole("button", {
+      name: /log in/i,
+    });
+    await user.type(inputEmail, "libraminh@gmail.com");
+    await user.type(passwordEmail, "lee123");
+    expect(btnLogin).not.toBeDisabled();
   });
 
-  it("show passsword input", async () => {
-    expect(getPasswordInput()).toBeInTheDocument();
-  });
-
-  it("could type the password", async () => {
-    await user.type(getPasswordInput(), "lee123");
-    expect(getPasswordInput().value).toBe("lee123");
+  it("login success, redirect to home", async () => {
+    const btnLogin = screen.getByRole("button", {
+      name: /log in/i,
+    });
+    await user.type(inputEmail, "libraminh@gmail.com");
+    await user.type(passwordEmail, "lee123");
+    await user.click(btnLogin);
+    expect(mockRouter).toMatchObject({
+      pathname: "",
+    });
   });
 });

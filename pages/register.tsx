@@ -64,7 +64,11 @@ const Register: NextPage = () => {
               { required: true, message: "Please input your first name!" },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="First name" />
+            <Input
+              data-testid="first-name"
+              prefix={<UserOutlined />}
+              placeholder="First name"
+            />
           </Form.Item>
 
           <Form.Item
@@ -73,7 +77,11 @@ const Register: NextPage = () => {
               { required: true, message: "Please input your first name!" },
             ]}
           >
-            <Input prefix={<UserOutlined />} placeholder="Last name" />
+            <Input
+              data-testid="last-name"
+              prefix={<UserOutlined />}
+              placeholder="Last name"
+            />
           </Form.Item>
 
           <Form.Item
@@ -89,7 +97,11 @@ const Register: NextPage = () => {
               },
             ]}
           >
-            <Input prefix={<MailOutlined />} placeholder="Email" />
+            <Input
+              data-testid="Email"
+              prefix={<MailOutlined className="site-form-item-icon" />}
+              placeholder="Email"
+            />
           </Form.Item>
 
           <Form.Item
@@ -103,6 +115,7 @@ const Register: NextPage = () => {
             hasFeedback
           >
             <Input.Password
+              data-testid="password"
               prefix={<LockOutlined className="site-form-item-icon" />}
               placeholder="Password"
             />
@@ -132,13 +145,14 @@ const Register: NextPage = () => {
             ]}
           >
             <Input.Password
+              data-testid="confirmPassword"
               prefix={<LockOutlined className="site-form-item-icon" />}
               placeholder="Confirm Password"
             />
           </Form.Item>
 
           <Form.Item className="text-center">
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" data-testid="register">
               Register
             </Button>
 

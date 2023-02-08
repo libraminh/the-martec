@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import Home from "../pages";
 
+const user = userEvent.setup();
+
 describe("Home Test", () => {
   beforeAll(() => {
     Object.defineProperty(window, "matchMedia", {
@@ -26,7 +28,8 @@ describe("Home Test", () => {
     ).toBeInTheDocument();
   });
 
-  it("show github input", async () => {
-    expect(screen.getByPlaceholderText(/username/i)).toBeInTheDocument();
+  it("could type the github input", async () => {
+    await user.type(screen.getByPlaceholderText(/username/i), "libraminh");
+    expect(screen.getByPlaceholderText(/username/i).value).toBe("libraminh");
   });
 });
